@@ -50,6 +50,12 @@
         float: right;
         padding-top: 1em;
       }
+
+      .bottom-notes {
+        position: absolute;
+        bottom: 1em;
+        right: 1em;
+      }
     </style>
   </head>
   <body>
@@ -61,6 +67,10 @@ class: center, middle
 # Modern SQL is awesome!
 ## Loris Bognanni
 ### FundApps
+
+.bottom-notes[
+<a href="https://github.com/LBognanni/SqlPresentation"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" style="width:2em;" title="Github repo" /></a>
+]
 
 ---
 
@@ -155,6 +165,10 @@ GROUP BY
 
 `Postgres >= 9.5`
 
+
+.bottom-notes[
+  <a href="grouping_sets.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
+]
 ---
 
 #Common table expressions
@@ -226,6 +240,9 @@ SELECT * FROM CTE WHERE MENUID=6 -- READ MENU#6 AND ALL OF ITS CHILDREN
 
 `Postgres >= 8.4 (WITH RECURSIVE)`
     
+.bottom-notes[
+  <a href="recursive_cte.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
+]
 ---
 
 #Group Totals
@@ -292,6 +309,10 @@ FROM @EXPENSES
 `Postgres >= 8.4`
 
 <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FVHngktboAlxHW%2Fgiphy.gif&f=1" style="width: 40%;" />
+    
+.bottom-notes[
+  <a href="over_part1.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
+]
 ---
 
 #Running Totals
@@ -328,6 +349,10 @@ FROM @EXPENSES
 `Postgres >= 8.4`
 
 <img src="https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FVHngktboAlxHW%2Fgiphy.gif&f=1" style="width: 40%;" />
+    
+.bottom-notes[
+  <a href="over_running_totals.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
+]
 ---
 
 #The best functions in SQL
@@ -351,6 +376,11 @@ FROM @EXPENSES
 |6|2|6|4|2|
 |7|3|7|7|3|
 |8|3|8|7|3|
+
+.bottom-notes[
+  <a href="row_number_rank.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
+]
+
 
 ---
 ---
