@@ -381,15 +381,123 @@ FROM @EXPENSES
   <a href="row_number_rank.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
 ]
 
+---
+
+#The best functions in SQL
+## Example uses: sample data
+|PERSON_ID|CONTACT_TYPE|CONTACT_VALUE|UPDATED_AT|
+|--|--|--|--:|
+|1|PHONE|555 123456|2019-05-19|
+|1|EMAIL|person1@example.com|2019-05-19|
+|1|PHONE|555 000000|2019-04-15|
+|1|PHONE|555 999999|2019-03-13|
+|1|EMAIL|an@old.email|2019-04-02|
+|2|PHONE|888 123456|2019-05-19|
+|2|EMAIL|person2@example.com|2019-05-19|
+|2|PHONE|888 999999|2019-03-13|
+|2|EMAIL|a2nd@old.email|2019-04-02|
 
 ---
+
+## Getting the last Email &amp; phone # for each PersonId
+
+```SQL
+;WITH NUMBERED_CONTACTS AS (
+  SELECT *, 
+
+      ROW_NUMBER() OVER(
+        PARTITION BY PERSON_ID, CONTACT_TYPE 
+        ORDER BY UPDATED_AT DESC
+      ) AS N 
+
+  FROM @CONTACT_REFS
+)
+SELECT PERSON_ID, CONTACT_TYPE, CONTACT_VALUE FROM NUMBERED_CONTACTS WHERE N=1
+```
+
+|PERSON_ID|CONTACT_TYPE|CONTACT_VALUE|
+|--|--|--|
+|1|EMAIL|person1@example.com|
+|1|PHONE|555 123456|
+|2|EMAIL|person2@example.com|
+|2|PHONE|888 123456|
+
+.bottom-notes[
+  <a href="row_number.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
+]
+---
+##Last 3 emails/phone #s for with each person
+### First, rank the contacts by type
+```SQL
+  SELECT PERSON_ID, CONTACT_TYPE, CONTACT_VALUE, 
+    DENSE_RANK() OVER (
+      PARTITION BY PERSON_ID, CONTACT_TYPE 
+      ORDER BY UPDATED_AT DESC
+    ) AS RANKID
+  FROM @CONTACT_REFS
+```
+
+|PERSON_ID | CONTACT_TYPE |  CONTACT_VALUE | RANKID|
+|--|--|--|--:|
+|1 | EMAIL | person1@example.com | 1|
+|1 | EMAIL | an@old.email |  2|
+|1 | PHONE | 555 123456 |  1|
+|1 | PHONE | 555 000000 |  2|
+|1 | PHONE | 555 999999 |  3|
+|2 | EMAIL | person2@example.com | 1|
+|2 | EMAIL | a2nd@old.email |  2|
+|2 | PHONE | 888 123456 |  1|
+|2 | PHONE | 888 999999 |  2|
+
+---
+##Last 3 emails/phone #s for with each person
+### Then, pivot the data
+
+```SQL
+;WITH RANKED_CONTACTS AS (
+  SELECT PERSON_ID, CONTACT_VALUE, 
+    DENSE_RANK() OVER (
+      PARTITION BY PERSON_ID, CONTACT_TYPE 
+      ORDER BY UPDATED_AT DESC
+    ) AS RANKID
+  FROM @CONTACT_REFS
+)
+SELECT PERSON_ID, [1] AS PHONE1,[2] AS PHONE2, [3] AS PHONE3
+FROM RANKED_CONTACTS
+PIVOT (
+  MIN(CONTACT_VALUE)
+  FOR RANKID IN ([1], [2], [3])
+) AS PVT
+
+```
+
+|P..._ID |CONTACT_TYPE |  CONTACT1 | CONTACT2 | CONTACT3|
+|--|--|--|--|--|
+|1 |EMAIL | person1@example.com | an@old.email | NULL|
+|2 |EMAIL | person2@example.com | a2nd@old.email | NULL|
+|1 |PHONE | 555 123456  | 555 000000 | 555 999999|
+|2 |PHONE | 888 123456  | 888 999999 | NULL|
+
+.bottom-notes[
+  <a href="rank_pivot.sql"><img src="sql.jpg" style="width: 2em;" alt="SQL" title=".sql example file"></a>
+]
+---
+
+#But wait, there's more!
+
+
+
+
+
 ---
     </textarea>
 <!--<img style="width: 75%;" src="https://www.newequipment.com/sites/newequipment.com/files/old-man-yells-at-cloud-simpsons.jpg" />-->
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
     </script>
     <script>
-      var slideshow = remark.create();
+      var slideshow = remark.create({
+        highlightStyle: 'googlecode'
+      });
     </script>
   </body>
 </html>
